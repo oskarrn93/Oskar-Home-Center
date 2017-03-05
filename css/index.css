@@ -1,36 +1,27 @@
-body
-{
+body, html {
     background-color: #626262;
+    height: 100%;
 }
 
-h1, h2, h3, h4 h5, p, label
-{
+h1, h2, h3, h4 h5, p, label {
     color: white;
 }
 
-.btnDimmer
-{
+.btnDimmer {
     margin-right: 5px;
 }
 
-.font-color-green
-{
+.font-color-green {
     /*color: green;*/
     color: #66CD00;
 }
 
-.font-color-red
-{
+.font-color-red {
     /*color: red;*/
     color: #FF4040;
 }
 
-.sidebar {
-  background-color: white;
-  height: 100vh;
-  width: 200px;
-}
-
-.main > a > .glyphicon {
-    font-size: 20px;
+.font-color-black {
+    /*color: black;*/
+    color: #000000;
 }

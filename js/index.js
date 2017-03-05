@@ -3,8 +3,8 @@ var sensor_data = [];
 
 function getDeviceInfo(tmpDevices) {
     console.log(tmpDevices)
-    var device;
-    var tmp;
+    var device, tmp;
+
     for (var a = 0; a < tmpDevices.length; a++) {
         device = tmpDevices[a];
         console.log("getData for id: " + device.id);
@@ -37,7 +37,6 @@ function getDeviceData() {
     });
 }
 
-
 function getSensorData() {
     $.ajax({
         type: "GET",
@@ -48,8 +47,8 @@ function getSensorData() {
                 console.log("no data");
                 return;
             }
-
             console.log(data);
+
             $("#insideTemperature").html(data[data.length - 1].temperature_inside + " &deg;c"); //temp
             $("#insideHumidity").text(data[data.length - 1].humidity_inside + " %"); //humidity
             $("#insideLastUpdated").text(data[data.length - 1].time_inside); //lastupdated*/
@@ -61,100 +60,11 @@ function getSensorData() {
             console.log("error: " + error);
         },
     });
-    /*//inside
-    $.ajax(
-    {
-        type: "GET",
-        dataType: "jsonp",
-        //async: false,
-        url: "http://192.168.1.5:8080/json/sensor/info?id=135",
-        success: function(data)
-        {
-            if(data == null || data == "" || data == undefined)
-            {
-                console.log("no data");
-                return;
-            }
-
-            console.log(data);
-            //console.log(new Date(data.lastUpdated * 1000));
-            var tmpDate = new Date(data.lastUpdated * 1000);
-            var tmpDateString = tmpDate.toDateString() + " " + tmpDate.toTimeString().split(" ")[0];
-
-            $("#insideTemperature").html(data.data[0].value +" &deg;c"); //temp
-            $("#insideHumidity").text(data.data[1].value +" %"); //humidity
-            $("#insideLastUpdated").text(tmpDateString); //lastupdated
-        },
-        error: function(error)
-        {
-            console.log("error: " + error);
-        },
-    });
-
-    //outside
-    $.ajax(
-    {
-        type: "GET",
-        dataType: "jsonp",
-        //async: false,
-        url: "http://192.168.1.5:8080/json/sensor/info?id=136",
-        success: function(data)
-        {
-            if(data == null || data == "" || data == undefined)
-            {
-                console.log("no data");
-                return;
-            }
-
-
-            console.log(data);
-            //console.log(data.data[0].value);
-            //console.log(new Date(data.lastUpdated * 1000));
-            var tmpDate = new Date(data.lastUpdated * 1000);
-            var tmpDateString = tmpDate.toDateString() + " " + tmpDate.toTimeString().split(" ")[0];
-
-            $("#outsideTemperature").html(data.data[0].value +" &deg;c"); //temp
-            $("#outsideLastUpdated").text(tmpDateString); //lastupdated
-        },
-        error: function(error)
-        {
-            console.log("error: ");
-            console.log(error);
-        },
-    });
-    //test fetch sensor
-    /*$.ajax(
-    {
-
-        type: "GET",
-        //dataType: "jsonp",
-        //async: false,
-        url: "http://192.168.1.5:83/info",
-        success: function(data)
-        {
-            console.log(data);
-            //sensor_data
-            //
-            console.log(data[0].temperature_inside);
-
-        },
-        error: function(error)
-        {
-            console.log("error: ");
-            console.log(error);
-        },
-        complete: function()
-        {
-
-        }
-    });*/
-
 }
 
 function getData() {
     getDeviceData();
     getSensorData();
-
 }
 
 function getPioneerData() {
@@ -166,15 +76,21 @@ function addUI() {
     var tmp = "";
 
     for (var a = 0; a < devices.length; a++) {
-        tmp += "<div class=\"row text-center\" style=\"margin-bottom: 10px\">";
-        tmp += "<div class=\"col-md-4 col-md-offset-4\">";
 
-        if (devices[a].state == 1 || devices[a].state == 16)
-            tmp += "<h2 class=\"font-color-green\" data-id=\"" + devices[a].id + "\">"
-        else if (devices[a].state == 2)
-            tmp += "<h2 class=\"font-color-red\" data-id=\"" + devices[a].id + "\">"
-        else
+      if(a%2 == 0)
+            tmp += "<div class=\"row text-center\">";
+
+        tmp += "<div class=\"col-md-6 col-md-offset-0\" style=\"margin-bottom: 50px\">";
+
+        if (devices[a].state == 1 || devices[a].state == 16){
+          tmp += "<h2 class=\"font-color-green\" data-id=\"" + devices[a].id + "\">"
+        }
+        else if (devices[a].state == 2){
+              tmp += "<h2 class=\"font-color-red\" data-id=\"" + devices[a].id + "\">"
+        }
+        else{
             tmp += "<h2 data-id=\"" + devices[a].id + "\">"
+        }
 
         tmp += devices[a].name.substring(6, devices[a].name.length) + "</h2>";
         tmp += "<button type=\"button\" class=\"btn btn-danger btn-lg btnOff\" data-id=\"" + devices[a].id + "\">Off</button>";
@@ -190,8 +106,13 @@ function addUI() {
             tmp += "<button type=\"button\" class=\"btn btn-danger btn-md btnDimmer\" data-dimmervalue=\"255\" data-id=\"" + devices[a].id + "\">5</button>";
         }
 
-        tmp += "<hr></div></div>";
+          if(a%2 == 1) //close the row div on the second element
+            tmp += "</div>";
+
+        tmp += "</div>";
     }
+
+    tmp += "</div></div>";
 
     $("#list-of-devices").append(tmp);
 }
@@ -205,10 +126,13 @@ function sendResponse(id, status) {
         success: function(data) {
             console.log(data)
 
-            if (status == "turnon")
+            if (status == "turnon"){
                 console.log("Sucessfully sent to turn on device " + id);
-            else if (status == "turnoff")
+            }
+
+            else if (status == "turnoff") {
                 console.log("Sucessfully sent to turn off device " + id);
+            }
         },
         error: function(error) {
             console.log(error);
@@ -311,14 +235,13 @@ $(document).ready(function() {
         $(this).parent().parent().siblings().find("h2").each(function() {
             $(this).removeClass().addClass("font-color-red")
         });
-
     });
 
     $("body").on("click", ".btnAllOn", function() {
         for (var a = 0; a < devices.length; a++) {
-            if (a == 4) //ignore lavalampan
+            if (a == 4) {//ignore lavalampan
                 continue;
-
+            }
             sendResponse(devices[a].id, "turnon");
         }
 
@@ -344,24 +267,10 @@ $(document).ready(function() {
     });
 
     $("body").on("click", "#receiverVolumeUp", function() {
-        /*var tmp = parseInt($("#receiverVolume").text().substring(5))
-        console.log(tmp)
-        sendResponsePioneer("volume/up")
-        tmp += 1
-        console.log(tmp)
-        $("#receiverVolume").text("Vol: " + tmp)*/
-
         sendResponsePioneer("volume/up")
     });
 
     $("body").on("click", "#receiverVolumeDown", function() {
-        /*var tmp = parseInt($("#receiverVolume").text().substring(5))
-        console.log(tmp)
-        sendResponsePioneer("volume/down")
-        tmp -= 1
-        console.log(tmp)
-        $("#receiverVolume").text("Vol: " + tmp)*/
-
         sendResponsePioneer("volume/down")
     });
 
@@ -373,14 +282,28 @@ $(document).ready(function() {
         }
     });
 
-    $("body").on("click", "#button_toggle_sidebar", function() {
-        $(".sidebar").toggle();
-        if ($(this).children().hasClass("glyphicon-remove")) {
-            $(this).children().removeClass("glyphicon-remove").addClass("glyphicon-menu-hamburger");
-        } else {
-            $(this).children().removeClass("glyphicon-menu-hamburger").addClass("glyphicon-remove");
-        }
+    $("body").on("click", "#nav_overview", function() {
+        $("#temperature").show();
+        $("#other").show();
+        $("#lights").show();
+    });
 
+    $("body").on("click", "#nav_lights", function() {
+        $("#temperature").hide();
+        $("#other").hide();
+        $("#lights").show();
+    });
+
+    $("body").on("click", "#nav_temperature", function() {
+        $("#other").hide();
+        $("#lights").hide();
+        $("#temperature").show();
+    });
+
+    $("body").on("click", "#nav_other", function() {
+        $("#temperature").hide();
+        $("#lights").hide();
+        $("#other").show();
     });
 
 
